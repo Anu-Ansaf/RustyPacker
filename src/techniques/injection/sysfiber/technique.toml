@@ -1,0 +1,8 @@
+id = "sysfiber"
+display_name = "Fibers via indirect syscalls"
+description = "Self-execute via fibers using indirect syscalls. Maximum evasion for self-injection."
+category = "injection"
+tags = ["self_injection", "syscall"]
+requires = ["self_injection"]
+incompatible_with = []
+template_dir = "sysFIBER"

@@ -1,0 +1,7 @@
+id = "aes"
+display_name = "AES-256-CBC — random key per build"
+description = "Encrypt shellcode with AES-256 in CBC mode using a random key + IV. Key and IV are embedded in the loader."
+category = "encryption"
+tags = []
+requires = []
+incompatible_with = []

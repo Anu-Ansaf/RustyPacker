@@ -1,0 +1,13 @@
+id = "domain_pin"
+display_name = "Domain pinning — only detonate on the named AD domain"
+description = "On startup, query the machine's DNS domain (GetComputerNameExW). Panic-exit if it does not match the expected value."
+category = "evasion"
+tags = []
+requires = []
+incompatible_with = []
+
+[[params]]
+name = "domain"
+kind = "text"
+label = "Expected domain"
+default = ""

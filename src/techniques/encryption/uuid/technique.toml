@@ -1,0 +1,7 @@
+id = "uuid"
+display_name = "UUID encoding — payload hidden as UUID strings"
+description = "Encode shellcode as a list of UUID strings, then XOR-mask the result. Reduces entropy detection."
+category = "encryption"
+tags = []
+requires = []
+incompatible_with = []
