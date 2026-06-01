@@ -1,0 +1,8 @@
+id = "enum_system_geo_id"
+display_name = "EnumSystemGeoID"
+description = "Execute via EnumSystemGeoID callback (geo class GEOCLASS_NATION = 16)."
+category = "injection"
+tags = ["self_injection"]
+requires = ["self_injection"]
+incompatible_with = []
+template_dir = "callbackExec"

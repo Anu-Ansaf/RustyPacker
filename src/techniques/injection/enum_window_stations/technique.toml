@@ -1,0 +1,8 @@
+id = "enum_window_stations"
+display_name = "EnumWindowStationsW"
+description = "Execute via EnumWindowStationsW callback. Lower API surface than EnumDesktopsW."
+category = "injection"
+tags = ["self_injection"]
+requires = ["self_injection"]
+incompatible_with = []
+template_dir = "callbackExec"

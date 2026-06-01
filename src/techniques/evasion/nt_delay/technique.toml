@@ -1,0 +1,19 @@
+id = "nt_delay"
+display_name = "NtDelayExecution — sleep around shellcode operations"
+description = "Insert a configurable Sleep() call. Use a long delay to outlast EDR sandbox emulators that bail after a few seconds, or stagger each step so behavioral analysis sees a slow-moving target."
+category = "evasion"
+tags = []
+requires = []
+incompatible_with = []
+
+[[params]]
+name = "delay_ms"
+kind = "text"
+label = "Delay (ms)"
+default = "3000"
+
+[[params]]
+name = "placement"
+kind = "choice"
+label = "Placement"
+options = ["Between every step", "Before execution only", "At start"]

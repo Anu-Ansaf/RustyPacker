@@ -1,0 +1,8 @@
+id = "enum_desktops"
+display_name = "EnumDesktopsW"
+description = "Execute via EnumDesktopsW callback on the current window station."
+category = "injection"
+tags = ["self_injection"]
+requires = ["self_injection"]
+incompatible_with = []
+template_dir = "callbackExec"

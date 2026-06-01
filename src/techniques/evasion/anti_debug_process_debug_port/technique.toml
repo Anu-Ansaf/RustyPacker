@@ -1,0 +1,7 @@
+id = "anti_debug_process_debug_port"
+display_name = "NtQueryInformationProcess · ProcessDebugPort"
+description = "Query the kernel debug port (class 7). A value of -1 means a debugger is attached."
+category = "evasion"
+tags = ["anti_debug"]
+requires = []
+incompatible_with = []
