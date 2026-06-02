@@ -4,7 +4,7 @@ use windows_sys::Win32::System::Memory::RtlCompareMemory;
 
 const MAX_PATTERN_SIZE: usize = 0x20;
 
-pub fn encode_system_ptr(ptr: u64) -> u64 {
+pub fn {{FN_ENC_PTR}}(ptr: u64) -> u64 {
     let cookie: u32 = unsafe { *(0x7FFE0330 as *const u32) };
     ((ptr ^ cookie as u64).rotate_right((cookie & 0x3F) as u32)) as u64
 }

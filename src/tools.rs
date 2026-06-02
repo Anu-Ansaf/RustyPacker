@@ -125,6 +125,7 @@ mod tests {
             params: HashMap::new(),
             output: None,
             sideload: None,
+            seed: crate::polymorph::BuildSeed(0),
         }
     }
 

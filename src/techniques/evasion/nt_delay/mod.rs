@@ -23,7 +23,7 @@ impl Technique for NtDelay {
             .param("nt_delay", "placement")
             .unwrap_or("Between every step");
 
-        let call = format!("pause({});", ms);
+        let call = format!("{{{{FN_PAUSE}}}}({});", ms);
 
         match placement {
             "At start" => {

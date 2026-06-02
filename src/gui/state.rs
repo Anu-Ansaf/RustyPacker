@@ -124,6 +124,7 @@ impl AppState {
             params: self.params.clone(),
             output: self.output_path.clone(),
             sideload,
+            seed: crate::polymorph::BuildSeed::from_os(),
         })
     }
 }

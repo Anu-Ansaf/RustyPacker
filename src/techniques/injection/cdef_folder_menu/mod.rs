@@ -11,10 +11,22 @@ impl Technique for CdefFolderMenu {
         let helpers = r#"
 unsafe extern "system" fn cdef_invoke(param: *mut winapi::ctypes::c_void) -> u32 {
     unsafe {
-        windows_sys::Win32::System::Com::CoInitializeEx(
+        // CoInitializeEx is process-global per-thread. Capture the HRESULT
+        // so we only pair with CoUninitialize when *we* did the initialization.
+        // RPC_E_CHANGED_MODE means the host already initialized the apartment
+        // in a different model. We proceed without uninitializing it.
+        let hr: i32 = windows_sys::Win32::System::Com::CoInitializeEx(
             std::ptr::null(),
             windows_sys::Win32::System::Com::COINIT_APARTMENTTHREADED as u32,
         );
+        const S_OK: i32 = 0;
+        const S_FALSE: i32 = 1;
+        const RPC_E_CHANGED_MODE: i32 = 0x80010106u32 as i32;
+        let we_initialized = hr == S_OK || hr == S_FALSE;
+        if !we_initialized && hr != RPC_E_CHANGED_MODE {
+            return 0;
+        }
+
         let callback: windows_sys::Win32::UI::Shell::LPFNDFMCALLBACK =
             Some(std::mem::transmute(param));
         let mut ppcm: *mut std::ffi::c_void = std::ptr::null_mut();
@@ -29,6 +41,10 @@ unsafe extern "system" fn cdef_invoke(param: *mut winapi::ctypes::c_void) -> u32
             std::ptr::null(),
             &mut ppcm,
         );
+
+        if we_initialized {
+            windows_sys::Win32::System::Com::CoUninitialize();
+        }
     }
     0
 }
