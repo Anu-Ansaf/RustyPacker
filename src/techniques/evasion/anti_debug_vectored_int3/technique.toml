@@ -1,0 +1,7 @@
+id = "anti_debug_vectored_int3"
+display_name = "Vectored INT3"
+description = "Register a vectored exception handler, raise INT3, then check whether the handler ran. If a debugger swallowed the trap, exit. Process-safe in DLL sideload (does not touch SetUnhandledExceptionFilter)."
+category = "evasion"
+tags = ["anti_debug"]
+requires = []
+incompatible_with = []

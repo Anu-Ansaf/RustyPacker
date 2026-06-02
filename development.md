@@ -68,8 +68,8 @@ Three layers:
 The middle layer is the interesting one. A "technique" is a plugin discovered
 at compile time. Each technique decides which template directory to copy and
 what string substitutions to make. The GUI just lists what's in the registry
-and lets the user pick + parameterise; the puzzle layer turns those picks
-into a Rust project on disk; the compiler runs `cargo` on it.
+and lets the user pick and parameterise. The puzzle layer turns those picks
+into a Rust project on disk. The compiler runs `cargo` on it.
 
 **Most new work happens inside `src/techniques/<category>/<id>/`** with
 optional changes to a `templates/<TemplateDir>/`. You rarely touch the GUI
@@ -628,7 +628,7 @@ When the user hits **BUILD** (top-right of the title bar, handled in
    folder. Stdout/stderr are streamed line-by-line into `build_log`, which
    is mirrored into the Console tab.
 
-If `cargo` fails, the panic propagates and the GUI surfaces the error.
+If `cargo` fails, the panic propagates and the GUI shows the error.
 The generated folder is **always left in place** for debugging.
 
 ---

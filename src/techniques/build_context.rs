@@ -3,6 +3,8 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
+use crate::polymorph::Polymorph;
+
 /// Holds the in-progress build state. Techniques mutate this to:
 ///   - choose which template directory to copy (`set_template`)
 ///   - register placeholder substitutions (`set_replacement`)
@@ -14,6 +16,9 @@ pub struct BuildContext<'a> {
     pub replacements: HashMap<&'static str, String>,
     pub template_choice: Option<&'static str>, // template folder name under `templates/`
     pub params: &'a HashMap<String, String>,   // scoped: "<technique_id>.<param_name>"
+    /// Shared per-build entropy. Techniques that need randomness pull it
+    /// from here so the same `Order::seed` reproduces the build.
+    pub polymorph: Polymorph,
 }
 
 impl<'a> BuildContext<'a> {

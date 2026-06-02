@@ -2,16 +2,17 @@
   <br>
   <img width="520px" src="assets/logo/logo.jpg" alt="RustyPacker Logo" />
   <h1>RustyPacker</h1>
-  <p><b>A native Rust shellcode packer with a GUI. Pick an encryption, an injection technique, optional anti debug, and evasion checks. RustyPacker assembles a Rust project from templates, compiles it, and drops a finished EXE or Proxy & sideloadable dlls.</b></p>
+  <p><b>A native Rust shellcode packer with a GUI. RustyPacker assembles a Rust project from templates, compiles it, and drops a finished EXE or Proxy & sideloadable DLLs.</b></p>
   <img src="https://img.shields.io/badge/Language-Rust-orange" alt="Language: Rust" />
   <img src="https://img.shields.io/badge/OS-Windows-blue" alt="OS: Windows" />
   <img src="https://img.shields.io/badge/Maintained-Yes-green" alt="Maintained: Yes" />
-  <img src="https://img.shields.io/badge/Version-v0.1--beta-purple" alt="Version: v0.1-beta" />
+  <img src="https://img.shields.io/badge/Version-v0.1.1-purple" alt="Version: v0.1.1" />
 </div>
 
 <br>
 
-RustyPacker Comes in 2 flavours: 
+RustyPacker comes in two themes:
+
 
 <div align="center">
   <img src="assets/img/main-1.png" width="49%" alt="RustyPacker main view" />
@@ -20,7 +21,7 @@ RustyPacker Comes in 2 flavours:
 
 <br>
 
-> Note: RustyPacker is in beta. Found a bug? Fixed one? Ready to ship your own technique? Jump in and make RustyPacker sharper. For more info, check [Contribution](#contribution) section.
+> Note: Rustypacker is in early stage of development. If you are facing bugs, please create an issue, Rustypacker grows along with the community. If you want to help by adding your own techniques or to fix a bug, please refer [Contribution](#contribution) section.
 
 ## What it does
 
@@ -42,16 +43,32 @@ RustyPacker writes a fresh Rust project under `shared/output_<timestamp>/`, perf
 | Encryption | AES-256-CBC, XOR, UUID                                                                                            |
 | Injection (remote) | sysCRT, winCRT, EarlyCascade                                                                              |
 | Injection (self)   | sysFIBER, EnumCalendarInfoA, EnumDesktopsW, EnumWindowStationsW, EnumSystemGeoID, CDefFolderMenu_Create2, RtlUserFiberStart |
-| Anti-debug | CheckRemoteDebuggerPresent, NtQueryInformationProcess (ProcessDebugPort), TEB BeingDebugged, SetUnhandledExceptionFilter int3 trick |
+| Anti-debug | CheckRemoteDebuggerPresent, NtQueryInformationProcess (ProcessDebugPort), TEB BeingDebugged, Vectored INT3 |
 | Evasion    | NtDelayExecution sleep, domain pinning                                                                            |
 | Output     | EXE, DLL, DLL Sideload (Sideload or Proxy with absolute or relative path)                                         |
 
 Other extras:
 
-- Live FlowCase tab. Visualises the execution path of the payload you build next.
+- Live FlowCase tab. Shows the execution path of the payload you are configuring.
 - Inline DLL exports preview when picking a sideload target.
-- Streaming Console. Surfaces `cargo` output line-by-line.
+- Streaming Console. Streams `cargo` output line by line.
 - Cyberpunk default theme. Switch to Tactical via the `◆` button in the top-left.
+
+---
+
+## Polymorphism
+
+Every build picks a fresh random seed from the OS and drives every variable surface in the payload from it. Two builds with the same shellcode and the same options still produce different payloads.
+
+What varies each build:
+
+- Anti debug API calls resolve at runtime via `GetModuleHandleA` and `GetProcAddress` with XOR'd name strings. `CheckRemoteDebuggerPresent`, `NtQueryInformationProcess`, `GetComputerNameExW`, `AddVectoredExceptionHandler`, and `RemoveVectoredExceptionHandler` do not appear in the payload IAT or `.rdata`.
+- The EarlyCascade stub is encrypted with XOR at packer time and decoded at runtime. The plaintext Outflank bytes (`55 56 57 65 48 8B 14 25 60 00 00 00 ...`) do not appear in the payload binary. The placeholder slot is filled with random bytes before encryption so the ciphertext carries no signature at a fixed offset either.
+- Function names like `boxboxbox`, `enhance`, `pause`, and every `evasion_anti_debug_*` are renamed each build. The pause cadence between injection steps is jittered around the base values. The shellcode XOR key and the obfuscated API name keys are random per build.
+
+Honest note: `TEB BeingDebugged` still uses the canonical `gs:[0x60]` PEB walk. That byte sequence is the same in commodity malware and is heavily signatured by every modern EDR. Drop it on important engagements.
+
+---
 
 ## Build and Run
 
@@ -61,12 +78,14 @@ Prerequisites:
 - Windows host with MSVC, or any host with the MinGW-w64 toolchain plus `rustup target add x86_64-pc-windows-gnu`.
 
 ```pwsh
-git clone <this repo>
+git clone https://github.com/Whitecat18/RustyPacker.git
 cd RustPacker
-cargo run --release
+cargo r -r
 ```
 
-The GUI opens. Drop in your shellcode and you go.
+The GUI opens. Drop in your shellcode and go.
+
+---
 
 ## Using the GUI
 
@@ -79,7 +98,7 @@ The window has three tabs.
 - DLL Sideload (when SIDELOAD is the format). Target DLL, hijack export, and mode (`SIDELOAD` for pure replacement, `PROXY` to forward unhandled exports to the original via a generated `.def`).
 - Encryption. Pick a method. Configure any parameters it exposes.
 - Injection. Toggle `SELF` or `REMOTE`, then pick a technique. The template dropdown filters to the matching mode. Per-technique params (e.g. target process name for remote) appear below.
-- Anti Debug. Empty by default. `+ ADD CHECK` opens a popup. Pick one to add it as a row. Each row has a `× Remove`.
+- Anti-debug. Empty by default. `+ ADD CHECK` opens a popup. Pick one to add it as a row. Each row has a `× Remove`.
 - Evasion. Same row builder pattern. Each evasion row exposes its own parameter form (delay ms, placement, expected domain, etc.).
 
 Validation errors (missing shellcode, missing sideload target, etc.) appear as a banner at the bottom.
@@ -91,6 +110,8 @@ A live, ordered preview of what the generated payload does. Steps run from `Load
 ### Console
 
 The build log. Streams `cargo build` stdout and stderr line-by-line, classified by `[*]`, `[+]`, `[!]`, `[-]` prefixes.
+
+---
 
 ## Output
 
@@ -109,6 +130,8 @@ shared/output_<unix-timestamp>/
 ```
 
 The full Rust project stays on disk for you to inspect, tweak, or rebuild manually.
+
+---
 
 ## Running the payload
 
@@ -139,11 +162,15 @@ The hijacked export from the target DLL becomes the entrypoint. Drop your DLL ne
 
 For the full sideloading workflow, picking a target, and proxy generation, see [LazyDLLSideload](https://github.com/Whitecat18/LazyDLLSideload).
 
+---
+
 ## For developers
 
 Adding your own encryption, injection, anti-debug, or evasion technique is a three-file change (`technique.toml` plus `mod.rs` plus an optional template folder). `build.rs` discovers techniques by walking `src/techniques/`, so there is no registration boilerplate to edit.
 
 Full guide lives in [development.md](./development.md). It covers architecture, manifest format, `BuildContext` API, placeholder catalogue, three worked examples, GUI integration notes, and common pitfalls.
+
+---
 
 ## Project layout
 
@@ -179,7 +206,7 @@ RustyPacker grows with community help. The repo runs on two branches.
 - `main`: stable version. Reviewed `dev` work lands here. Maintainers add extra techniques and hardening during the merge.
 - `dev`: where new work lands first. All contributor PRs target this branch.
 
-To Contribute:-
+To contribute:
 
 1. Fork the repo and clone your fork.
 2. Switch to the `dev` branch on your fork. Branch off `dev`, not `main`.
@@ -188,26 +215,21 @@ To Contribute:-
 5. Code, run `cargo run --release` to smoke-test, then open a pull request targeting `dev`.
 6. Wait for review. Maintainers might request changes before merging to `dev`. Your contribution rides into `main` later, with the next `dev` merge.
 
-Recognition:-
+Recognition:
 
 Every accepted contribution puts your handle in the Credits section and the release notes. Your name stays in the contributor list.
 
-> Motivation: Bring your shellcode, your weird ideas to evade systems, and your patches. RustyPacker gets sharper with every PR you send.
-
-## License
-
-RustyPacker is licensed under either of
-
-- Apache License, Version 2.0, ([LICENSE-APACHE](./LICENSE-APACHE) or
-  <https://www.apache.org/licenses/LICENSE-2.0>)
-- MIT license ([LICENSE-MIT](./LICENSE-MIT>) or <https://opensource.org/licenses/MIT>)
+> Motivation: Bring your shellcode, your ideas for evading systems, and your patches.
 
 ## Credits
 
-- [Rust-for-Malware-Development](https://github.com/Whitecat18/Rust-for-Malware-Development): For Injection Templates
-- [Dyncvoke](https://github.com/Whitecat18/Dyncvoke): For Dynamic & Syscalls
-- [LazyDLLSideload](https://github.com/Whitecat18/LazyDLLSideload): For Proxy & Sideloading
+- [Dyncvoke](https://github.com/Whitecat18/Dyncvoke) 
+- [Rust-for-Malware-Development](https://github.com/Whitecat18/Rust-for-Malware-Development)
+- [LazyDLLSideload](https://github.com/Whitecat18/LazyDLLSideload)
+- [EarlyCascade](https://github.com/Whitecat18/earlycascade-injection.git) 
+
+> Note: Original credits have been mentioned in the main repository. I respect each and every one's hard work and their will to help the community.
 
 ## Disclaimer
 
-For authorised offensive security work, CTFs, malware research, and detection engineering only...
+For authorised offensive security work, CTFs, malware research, and detection engineering only.

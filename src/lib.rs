@@ -1,8 +1,10 @@
 pub mod build_log;
 pub mod compiler;
+pub mod earlycascade_emit;
 pub mod gui;
 pub mod order;
 pub mod pe_parser;
+pub mod polymorph;
 pub mod puzzle;
 pub mod shellcode_reader;
 pub mod sideload;
