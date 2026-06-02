@@ -1,6 +1,6 @@
 <div align="center">
   <br>
-  <img width="520px" src="assets/logo/logo.jpg" alt="RustyPacker Logo" />
+  <img width="520px" src="./assets/logos/logo.jpg" alt="RustyPacker Logo" />
   <h1>RustyPacker</h1>
   <p><b>A native Rust shellcode packer with a GUI. RustyPacker assembles a Rust project from templates, compiles it, and drops a finished EXE or Proxy & sideloadable DLLs.</b></p>
   <img src="https://img.shields.io/badge/Language-Rust-orange" alt="Language: Rust" />
@@ -15,8 +15,8 @@ RustyPacker comes in two themes:
 
 
 <div align="center">
-  <img src="assets/img/main-1.png" width="49%" alt="RustyPacker main view" />
-  <img src="assets/img/main-2.png" width="49%" alt="RustyPacker secondary view" />
+  <img src="./assets/imgs/main-1.png" width="49%" alt="RustyPacker main view" />
+  <img src="./assets/imgs/main-2.png" width="49%" alt="RustyPacker secondary view" />
 </div>
 
 <br>
