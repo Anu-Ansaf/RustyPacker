@@ -14,9 +14,12 @@ impl Technique for NtDelay {
 
     fn apply(&self, ctx: &mut BuildContext) -> anyhow::Result<()> {
         let raw_ms = ctx.param("nt_delay", "delay_ms").unwrap_or("3000");
-        let ms: u64 = raw_ms.trim().parse().unwrap_or(3000);
+        let trimmed = raw_ms.trim();
+        let ms: u64 = trimmed.parse().map_err(|e| {
+            anyhow::anyhow!("nt_delay.delay_ms: expected integer milliseconds, got {trimmed:?} ({e})")
+        })?;
         if ms == 0 {
-            return Ok(()); // no-op when user clears the field
+            return Ok(());
         }
 
         let placement = ctx

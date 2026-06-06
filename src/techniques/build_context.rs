@@ -49,4 +49,35 @@ impl<'a> BuildContext<'a> {
         let key = format!("{}.{}", technique_id, param_name);
         self.params.get(&key).map(String::as_str)
     }
+
+    pub fn apply_exec_mode(&mut self, technique_id: &str) {
+        let mode = self.param(technique_id, "exec_mode").unwrap_or("syscall");
+        let (features, macro_body, extra_deps) = match mode {
+            "callstack" => (
+                "\"syscall\", \"spoof\", \"spoof-desync\"",
+                CALLSTACK_NT_CALL_MACRO,
+                CALLSTACK_EXTRA_DEPS,
+            ),
+            _ => ("\"syscall\"", SYSCALL_NT_CALL_MACRO, ""),
+        };
+        self.set_replacement("{{DYNCVOKE_FEATURES}}", features.to_string());
+        self.set_replacement("{{NT_CALL_MACRO}}", macro_body.to_string());
+        self.set_replacement("{{DYNCVOKE_EXTRA_DEPS}}", extra_deps.to_string());
+    }
 }
+
+const SYSCALL_NT_CALL_MACRO: &str = r#"macro_rules! ntcall {
+    ($name:expr $(, $arg:expr)* $(,)?) => {{
+        let _n = data::lc!($name);
+        dyncvoke_core::syscall!(_n.as_str() $(, $arg)*).unwrap_or(-1)
+    }};
+}"#;
+
+const CALLSTACK_NT_CALL_MACRO: &str = r#"macro_rules! ntcall {
+    ($name:expr $(, $arg:expr)* $(,)?) => {{
+        let _n = data::lc!($name);
+        spoof::spoof_syscall!(_n.as_str(), $($arg),*).map(|p| p as i32).unwrap_or(-1)
+    }};
+}"#;
+
+const CALLSTACK_EXTRA_DEPS: &str = r#"spoof = { git = "https://codeberg.org/smukx/Dyncvoke.git", features = ["desync"] }"#;

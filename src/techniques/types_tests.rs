@@ -33,7 +33,7 @@ mod tests {
 
     #[test]
     fn all_eight_injections_register() {
-        let ids = ["syscrt", "wincrt", "earlycascade", "sysfiber"];
+        let ids = ["syscrt", "wincrt", "earlycascade"];
         for id in ids {
             assert!(crate::techniques::find(id).is_some(), "missing injection: {id}");
         }

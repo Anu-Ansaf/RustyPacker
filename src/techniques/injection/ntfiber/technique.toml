@@ -1,0 +1,15 @@
+id = "ntfiber"
+display_name = "ntFIBER — Fibers via indirect syscall"
+description = "Self-execute via fibers. NT memory ops issued through dyncvoke (indirect syscall or call-stack spoofing); the fiber primitives stay on windows-sys."
+category = "injection"
+tags = ["self_injection"]
+requires = ["self_injection"]
+incompatible_with = []
+template_dir = "ntFIBER"
+
+[[params]]
+name = "exec_mode"
+kind = "choice"
+label = "Execution mode"
+options = ["syscall", "callstack"]
+default = "syscall"

@@ -257,9 +257,8 @@ pub fn assemble(order: Order) -> PathBuf {
     copy_template(&template_path, &folder).expect("Failed to copy template");
 
     if template_name == "ntEarlyCascade" {
-        if let Err(e) = crate::earlycascade_emit::rewrite_stubs(&folder, &mut ctx.polymorph) {
-            crate::blog!("[!] EarlyCascade stub rewrite failed: {e}");
-        }
+        crate::earlycascade_emit::rewrite_stubs(&folder, &mut ctx.polymorph)
+            .expect("EarlyCascade stub rewrite failed (encrypted stub is required at runtime)");
     }
 
     // 2. Encryption technique writes the encrypted file + decryption replacements.

