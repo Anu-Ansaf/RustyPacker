@@ -1,7 +1,18 @@
 use crate::techniques::{BuildContext, Technique, TechniqueMeta};
-use crate::tools::{random_aes_iv, random_aes_key};
 use libaes::Cipher;
 use std::fs;
+
+fn polymorph_bytes<const N: usize>(ctx: &mut BuildContext) -> [u8; N] {
+    let mut out = [0u8; N];
+    let mut i = 0;
+    while i < N {
+        let chunk = ctx.polymorph.random_u64().to_le_bytes();
+        let take = core::cmp::min(8, N - i);
+        out[i..i + take].copy_from_slice(&chunk[..take]);
+        i += take;
+    }
+    out
+}
 
 pub struct Aes;
 
@@ -9,8 +20,8 @@ impl Technique for Aes {
     fn meta(&self) -> &'static TechniqueMeta { &AES_META }
 
     fn apply(&self, ctx: &mut BuildContext) -> anyhow::Result<()> {
-        let key = random_aes_key();
-        let iv = random_aes_iv();
+        let key: [u8; 32] = polymorph_bytes::<32>(ctx);
+        let iv: [u8; 16] = polymorph_bytes::<16>(ctx);
         let shellcode = fs::read(ctx.shellcode_path)
             .map_err(|e| anyhow::anyhow!("read shellcode: {e}"))?;
         let cipher = Cipher::new_256(&key);

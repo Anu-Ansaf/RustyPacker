@@ -13,7 +13,7 @@ winapi = { version = "0.3", features = [
     "debugapi", "errhandlingapi", "sysinfoapi",
     "minwindef", "handleapi",
 ] }
-dyncvoke = { git = "https://github.com/Whitecat18/Dyncvoke" }
+dyncvoke = { git = "https://codeberg.org/smukx/Dyncvoke.git" }
 {{DEPENDENCIES}}
 
 [dependencies.windows-sys]

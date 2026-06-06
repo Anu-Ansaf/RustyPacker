@@ -64,6 +64,7 @@ unsafe extern "system" fn cdef_invoke(param: *mut winapi::ctypes::c_void) -> u32
         );
         if !thread.is_null() {
             winapi::um::synchapi::WaitForSingleObject(thread, 0xFFFFFFFF);
+            winapi::um::handleapi::CloseHandle(thread);
         }
 "#;
         ctx.set_replacement("{{CALLBACK_INVOKE}}", body.to_string());

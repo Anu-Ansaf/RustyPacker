@@ -8,7 +8,7 @@ edition = "2021"
 {{DLL_FORMAT}}
 
 [dependencies]
-dyncvoke = { git = "https://github.com/Whitecat18/Dyncvoke" }
+dyncvoke = { git = "https://codeberg.org/smukx/Dyncvoke.git" }
 sysinfo = "0.38"
 ntapi = { version = "0.4", features = ["impl-default"] }
 winapi = { version = "0.3", features = ["ntdef", "ntstatus", "impl-default", "winnt", "libloaderapi", "processthreadsapi", "debugapi", "errhandlingapi", "sysinfoapi"] }

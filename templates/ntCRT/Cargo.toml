@@ -1,11 +1,12 @@
 [package]
-name = "ntEarlyCascade"
+name = "ntCRT"
 version = "0.1.0"
 edition = "2021"
 
 {{DLL_FORMAT}}
 
 [dependencies]
+sysinfo = "0.38"
 dyncvoke = { git = "https://codeberg.org/smukx/Dyncvoke.git", default-features = false, features = [{{DYNCVOKE_FEATURES}}] }
 dyncvoke_core = { git = "https://codeberg.org/smukx/Dyncvoke.git" }
 data = { git = "https://codeberg.org/smukx/Dyncvoke.git" }
@@ -15,10 +16,8 @@ data = { git = "https://codeberg.org/smukx/Dyncvoke.git" }
 version = "0.61"
 features = [
     "Win32_Foundation",
-    "Win32_Security",
     "Win32_System_Memory",
     "Win32_System_Threading",
-    "Win32_System_Diagnostics_Debug",
 ]
 
 {{DEPENDENCIES}}

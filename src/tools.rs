@@ -63,7 +63,6 @@ fn template_name_for_injection(injection_id: &str) -> &'static str {
     match injection_id {
         "syscrt"                 => "sysCRT",
         "wincrt"                 => "winCRT",
-        "sysfiber"               => "sysFIBER",
         "earlycascade"           => "ntEarlyCascade",
         "enum_calendar_info"     => "callbackExec",
         "enum_desktops"          => "callbackExec",
