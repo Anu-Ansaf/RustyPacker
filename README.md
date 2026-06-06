@@ -2,7 +2,7 @@
   <br>
   <img width="520px" src="./assets/logos/logo.jpg" alt="RustyPacker Logo" />
   <h1>RustyPacker</h1>
-  <p><b>A native Rust shellcode packer with a GUI. RustyPacker assembles a Rust project from templates, compiles it, and drops a finished EXE or Proxy & sideloadable DLLs.</b></p>
+  <p><b>A native Rust shellcode packer with a GUI. RustyPacker assembles a Rust project from templates, compiles it in an format of EXE or Proxy & sideloadable DLLs.</b></p>
   <img src="https://img.shields.io/badge/Language-Rust-orange" alt="Language: Rust" />
   <img src="https://img.shields.io/badge/OS-Windows-blue" alt="OS: Windows" />
   <img src="https://img.shields.io/badge/Maintained-Yes-green" alt="Maintained: Yes" />
@@ -66,8 +66,6 @@ What varies each build:
 - The EarlyCascade stub is encrypted with XOR at packer time and decoded at runtime. The plaintext Outflank bytes (`55 56 57 65 48 8B 14 25 60 00 00 00 ...`) do not appear in the payload binary. The placeholder slot is filled with random bytes before encryption so the ciphertext carries no signature at a fixed offset either.
 - Function names like `boxboxbox`, `enhance`, `pause`, and every `evasion_anti_debug_*` are renamed each build. The pause cadence between injection steps is jittered around the base values. The shellcode XOR key and the obfuscated API name keys are random per build.
 
-Honest note: `TEB BeingDebugged` still uses the canonical `gs:[0x60]` PEB walk. That byte sequence is the same in commodity malware and is heavily signatured by every modern EDR. Drop it on important engagements.
-
 ---
 
 ## Build and Run
@@ -82,10 +80,6 @@ git clone https://github.com/Whitecat18/RustyPacker.git
 cd RustPacker
 cargo r -r
 ```
-
-The GUI opens. Drop in your shellcode and go.
-
----
 
 ## Using the GUI
 
@@ -224,7 +218,7 @@ Every accepted contribution puts your handle in the Credits section and the rele
 ## Credits
 
 - [Dyncvoke](https://github.com/Whitecat18/Dyncvoke) 
-- [Rust-for-Malware-Development](https://github.com/Whitecat18/Rust-for-Malware-Development)
+- [Rust-for-Malware-Development](https://codeberg.org/smukx/Rust-for-Malware-Development.git)
 - [LazyDLLSideload](https://github.com/Whitecat18/LazyDLLSideload)
 - [EarlyCascade](https://github.com/Whitecat18/earlycascade-injection.git) 
 
@@ -232,4 +226,4 @@ Every accepted contribution puts your handle in the Credits section and the rele
 
 ## Disclaimer
 
-For authorised offensive security work, CTFs, malware research, and detection engineering only.
+This tool is for authorised offensive security work, CTFs, malware research, and detection engineering only.
