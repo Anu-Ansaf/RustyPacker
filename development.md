@@ -649,7 +649,7 @@ Proxy mode adds these to `{{DEPENDENCIES}}`:
 
 ```toml
 lazy_static = "1.4"
-dyncvoke = { git = "https://github.com/Whitecat18/Dyncvoke" }
+dyncvoke = { git = "https://git.smukx.site/smukx/Dyncvoke" }
 ```
 
 `pe_parser::parse_exports` is what populates the `.def`; it also feeds the

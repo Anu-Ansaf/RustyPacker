@@ -8,20 +8,17 @@ edition = "2021"
 {{DLL_FORMAT}}
 
 [dependencies]
-sysinfo = "0.38"
-winapi = { version = "0.3", features = ["ntdef", "libloaderapi", "processthreadsapi", "debugapi", "errhandlingapi", "winnt", "sysinfoapi"] }
 {{DEPENDENCIES}}
 
 [dependencies.windows]
 version = "0.62"
 features = [
-    "Win32_UI_Input_Pointer",
     "Win32_Foundation",
     "Win32_System_Threading",
     "Win32_System_Memory",
     "Win32_System_Diagnostics_Debug",
+    "Win32_System_Diagnostics_ToolHelp",
     "Win32_Security",
-    "Win32_UI_Input_Pointer",
     "Win32_System_SystemInformation"
 ]
 

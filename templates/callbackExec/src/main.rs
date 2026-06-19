@@ -5,7 +5,7 @@ use std::include_bytes;
 use std::ptr::null_mut;
 use std::time::Instant;
 
-use winapi::ctypes::c_void;
+use core::ffi::c_void;
 
 use windows_sys::Win32::System::Memory::{
     MEM_COMMIT, MEM_RESERVE, PAGE_EXECUTE_READ, PAGE_READWRITE,

@@ -80,4 +80,4 @@ const CALLSTACK_NT_CALL_MACRO: &str = r#"macro_rules! ntcall {
     }};
 }"#;
 
-const CALLSTACK_EXTRA_DEPS: &str = r#"spoof = { git = "https://codeberg.org/smukx/Dyncvoke.git", features = ["desync"] }"#;
+const CALLSTACK_EXTRA_DEPS: &str = r#"spoof = { git = "https://git.smukx.site/smukx/Dyncvoke", features = ["desync"] }"#;

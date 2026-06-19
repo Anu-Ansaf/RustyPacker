@@ -10,7 +10,7 @@ impl Technique for EnumWindowStations {
         let body = r#"
         let addr = syscall_alloc_exec(&vec);
         if addr.is_null() { return; }
-        winapi::um::winuser::EnumWindowStationsW(
+        windows_sys::Win32::System::StationsAndDesktops::EnumWindowStationsW(
             Some(std::mem::transmute(addr)),
             0,
         );

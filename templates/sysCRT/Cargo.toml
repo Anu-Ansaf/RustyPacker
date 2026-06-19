@@ -8,11 +8,17 @@ edition = "2021"
 {{DLL_FORMAT}}
 
 [dependencies]
-dyncvoke = { git = "https://codeberg.org/smukx/Dyncvoke.git" }
-sysinfo = "0.38"
-ntapi = { version = "0.4", features = ["impl-default"] }
-winapi = { version = "0.3", features = ["ntdef", "ntstatus", "impl-default", "winnt", "libloaderapi", "processthreadsapi", "debugapi", "errhandlingapi", "sysinfoapi"] }
+dyncvoke = { git = "https://git.smukx.site/smukx/Dyncvoke" }
 {{DEPENDENCIES}}
+
+[dependencies.windows-sys]
+version = "0.61"
+features = [
+    "Win32_Foundation",
+    "Win32_System_Memory",
+    "Win32_System_Threading",
+    "Win32_System_Diagnostics_ToolHelp",
+]
 
 [profile.release]
 strip = true  # Automatically strip symbols from the binary.
