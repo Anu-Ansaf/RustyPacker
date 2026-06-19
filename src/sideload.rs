@@ -79,7 +79,7 @@ pub fn apply(
             .cloned()
             .unwrap_or_default();
         let extra = r#"lazy_static = "1.4"
-dyncvoke = { git = "https://github.com/Whitecat18/Dyncvoke" }"#;
+dyncvoke = { git = "https://git.smukx.site/smukx/Dyncvoke" }"#;
         let merged_deps = if existing_deps.is_empty() {
             extra.to_string()
         } else {

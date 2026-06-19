@@ -10,8 +10,8 @@ impl Technique for EnumDesktops {
         let body = r#"
         let addr = syscall_alloc_exec(&vec);
         if addr.is_null() { return; }
-        winapi::um::winuser::EnumDesktopsW(
-            winapi::um::winuser::GetProcessWindowStation(),
+        windows_sys::Win32::System::StationsAndDesktops::EnumDesktopsW(
+            windows_sys::Win32::System::StationsAndDesktops::GetProcessWindowStation(),
             Some(std::mem::transmute(addr)),
             0,
         );

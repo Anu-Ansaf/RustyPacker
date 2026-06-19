@@ -6,9 +6,9 @@ edition = "2021"
 {{DLL_FORMAT}}
 
 [dependencies]
-dyncvoke = { git = "https://codeberg.org/smukx/Dyncvoke.git", default-features = false, features = [{{DYNCVOKE_FEATURES}}] }
-dyncvoke_core = { git = "https://codeberg.org/smukx/Dyncvoke.git" }
-data = { git = "https://codeberg.org/smukx/Dyncvoke.git" }
+dyncvoke = { git = "https://git.smukx.site/smukx/Dyncvoke", default-features = false, features = [{{DYNCVOKE_FEATURES}}] }
+dyncvoke_core = { git = "https://git.smukx.site/smukx/Dyncvoke" }
+data = { git = "https://git.smukx.site/smukx/Dyncvoke" }
 {{DYNCVOKE_EXTRA_DEPS}}
 
 [dependencies.windows-sys]

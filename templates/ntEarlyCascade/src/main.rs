@@ -24,6 +24,10 @@ use windows_sys::Win32::System::Threading::{
 
 {{DECRYPTION_FUNCTION}}
 
+{{STR_DECODER}}
+
+{{API_RESOLVER}}
+
 type HANDLE = *mut c_void;
 
 #[inline]

@@ -17,6 +17,10 @@ use std::time::Instant;
 
 {{DECRYPTION_FUNCTION}}
 
+{{STR_DECODER}}
+
+{{API_RESOLVER}}
+
 type HANDLE = *mut c_void;
 
 #[inline]
