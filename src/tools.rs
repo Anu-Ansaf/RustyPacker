@@ -60,9 +60,13 @@ pub fn get_source_binary_filename(order: &Order, output_folder: &Path) -> PathBu
 
 fn template_name_for_injection(injection_id: &str) -> &'static str {
     // The compiled binary inherits its name from the template folder.
+    // Must stay in sync with each injection's `template_dir` in technique.toml.
     match injection_id {
         "syscrt"                 => "sysCRT",
         "wincrt"                 => "winCRT",
+        "ntcrt"                  => "ntCRT",
+        "ntapc"                  => "ntAPC",
+        "ntfiber"                => "ntFIBER",
         "earlycascade"           => "ntEarlyCascade",
         "enum_calendar_info"     => "callbackExec",
         "enum_desktops"          => "callbackExec",
