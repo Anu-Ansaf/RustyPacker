@@ -10,6 +10,7 @@ dyncvoke = { git = "https://git.smukx.site/smukx/Dyncvoke", default-features = f
 dyncvoke_core = { git = "https://git.smukx.site/smukx/Dyncvoke" }
 data = { git = "https://git.smukx.site/smukx/Dyncvoke" }
 {{DYNCVOKE_EXTRA_DEPS}}
+{{DEPENDENCIES}}
 
 [dependencies.windows-sys]
 version = "0.61"
@@ -18,8 +19,6 @@ features = [
     "Win32_System_Memory",
     "Win32_System_Threading",
 ]
-
-{{DEPENDENCIES}}
 
 [profile.release]
 strip = true
