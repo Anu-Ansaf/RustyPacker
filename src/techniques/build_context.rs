@@ -69,14 +69,14 @@ impl<'a> BuildContext<'a> {
 const SYSCALL_NT_CALL_MACRO: &str = r#"macro_rules! ntcall {
     ($name:expr $(, $arg:expr)* $(,)?) => {{
         let _n = data::lc!($name);
-        dyncvoke_core::syscall!(_n.as_str() $(, $arg)*).unwrap_or(-1)
+        dyncvoke_core::syscall!(_n.as_str() $(, $arg)*).unwrap() as i32
     }};
 }"#;
 
 const CALLSTACK_NT_CALL_MACRO: &str = r#"macro_rules! ntcall {
     ($name:expr $(, $arg:expr)* $(,)?) => {{
         let _n = data::lc!($name);
-        spoof::spoof_syscall!(_n.as_str(), $($arg),*).map(|p| p as i32).unwrap_or(-1)
+        spoof::spoof_syscall!(_n.as_str(), $($arg),*).unwrap() as i32
     }};
 }"#;
 
