@@ -30,7 +30,7 @@ unsafe fn syscall_alloc_exec(bytes: &[u8]) -> *mut c_void {
         &mut size as *mut usize,
         MEM_COMMIT | MEM_RESERVE,
         PAGE_READWRITE
-    ).unwrap_or(-1);
+    ).unwrap() as i32;
     if status < 0 || base.is_null() { return null_mut(); }
 
     std::ptr::copy_nonoverlapping(bytes.as_ptr(), base as *mut u8, bytes.len());
@@ -44,7 +44,7 @@ unsafe fn syscall_alloc_exec(bytes: &[u8]) -> *mut c_void {
         &mut psize as *mut usize,
         PAGE_EXECUTE_READ,
         &mut old_protect as *mut u32
-    ).unwrap_or(-1);
+    ).unwrap() as i32;
     if status < 0 { return null_mut(); }
 
     base

