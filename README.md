@@ -159,11 +159,16 @@ Every accepted contribution puts your handle in the Credits section and the rele
 
 While transferring the project, I added a separate resources section where I included the sources for each PoC. I have uploaded the older version of the README. I'm sorry for not noticing it and thank you for telling it. 
 
-- [ Template Wrapper from RustPacker](https://github.com/Nariod/RustPacker)
+- [ Template ( Wrapper & DLL ) from RustPacker ](https://github.com/Nariod/RustPacker)
 - [ DLL Sideloading & Proxy templates ](https://git.smukx.site/smukx/LazyDLLSideload)
-- [ EarlyCascade Template ](https://github.com/Whitecat18/earlycascade-injection)
+- [ EarlyCascade Template ](https://github.com/Whitecat18/earlycascade-injection) 
 - [ Self Injection Methods ](https://git.smukx.site/smukx/Rust-for-Malware-Development)
-
+- [ AntiDebugging Methods ](https://git.smukx.site/smukx/Rust-for-Malware-Development/src/branch/main/AntiDebugging)
+- [ UUID Shellcode Encryption ](https://git.smukx.site/smukx/Rust-for-Malware-Development/src/branch/main/UUID_Shellcode_Execution)
+- [ XOR Encryption ](https://git.smukx.site/smukx/Rust-for-Malware-Development/src/branch/main/Encryption%20Methods/xor_encrypt.rs)
+- [ Remote NtCreateUserProcess Injection ](https://git.smukx.site/smukx/Rust-for-Malware-Development/src/branch/main/NtCreateUserProcess)
+- [ Call Stack & Syscall Wrapper ](https://git.smukx.site/smukx/Dyncvoke)
+  
 ## Credits 
 
 - [Dyncvoke](https://git.smukx.site/smukx/Dyncvoke)
