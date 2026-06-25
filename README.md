@@ -155,7 +155,16 @@ build.rs                    # walks techniques/, emits registry.rs into OUT_DIR
 
 Every accepted contribution puts your handle in the Credits section and the release notes. Your name stays in the contributor list.
 
-## Credits
+## Resource
+
+While transferring the project, I added a separate resources section where I included the sources for each PoC. I have uploaded the older version of the README. I'm sorry for not noticing it and thank you for telling it. 
+
+- [ Template Wrapper from RustPacker](https://github.com/Nariod/RustPacker)
+- [ DLL Sideloading & Proxy templates ](https://git.smukx.site/smukx/LazyDLLSideload)
+- [ EarlyCascade Template ](https://github.com/Whitecat18/earlycascade-injection)
+- [ Self Injection Methods ](https://git.smukx.site/smukx/Rust-for-Malware-Development)
+
+## Credits 
 
 - [Dyncvoke](https://git.smukx.site/smukx/Dyncvoke)
 - [Rust-for-Malware-Development](https://git.smukx.site/smukx/Rust-for-Malware-Development)
