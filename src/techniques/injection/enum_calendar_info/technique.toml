@@ -1,8 +1,0 @@
-id = "enum_calendar_info"
-display_name = "EnumCalendarInfoA"
-description = "Execute via EnumCalendarInfoA callback. CalType 21 with LOCALE_USER_DEFAULT."
-category = "injection"
-tags = ["self_injection"]
-requires = ["self_injection"]
-incompatible_with = []
-template_dir = "callbackExec"
