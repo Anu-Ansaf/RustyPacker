@@ -1,8 +1,0 @@
-id = "rtl_user_fiber_start"
-display_name = "RtlUserFiberStart"
-description = "Pivot into a fiber via undocumented ntdll!RtlUserFiberStart and a hand-rolled TEB fiber-data block."
-category = "injection"
-tags = ["self_injection"]
-requires = ["self_injection"]
-incompatible_with = []
-template_dir = "callbackExec"

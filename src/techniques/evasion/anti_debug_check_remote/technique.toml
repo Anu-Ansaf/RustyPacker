@@ -1,7 +1,0 @@
-id = "anti_debug_check_remote"
-display_name = "CheckRemoteDebuggerPresent"
-description = "Exit if a kernel debugger is attached. Detected via the documented Win32 API."
-category = "evasion"
-tags = ["anti_debug"]
-requires = []
-incompatible_with = []

@@ -1,8 +1,0 @@
-id = "cdef_folder_menu"
-display_name = "CDefFolderMenu_Create2"
-description = "Execute via Shell32 CDefFolderMenu_Create2 callback, dispatched from a worker thread."
-category = "injection"
-tags = ["self_injection"]
-requires = ["self_injection"]
-incompatible_with = []
-template_dir = "callbackExec"

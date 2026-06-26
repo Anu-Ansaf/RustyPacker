@@ -1,7 +1,0 @@
-id = "xor"
-display_name = "XOR — single-byte key (fast, trivial entropy)"
-description = "XOR each shellcode byte with a random non-zero byte. Lightweight, easy to detect in entropy analysis."
-category = "encryption"
-tags = []
-requires = []
-incompatible_with = []
