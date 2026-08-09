@@ -113,7 +113,7 @@ fn render_cargo_toml(meta: &CrateMeta) -> String {
     }
     out.push_str("[dependencies]\n");
     out.push_str(
-        "dyncvoke = { git = \"https://git.smukx.site/smukx/Dyncvoke\" }\n",
+        "dyncvoke = { git = \"https://git.smukx.site/smukx/Dyncvoke.git\" }\n",
     );
     for line in &meta.extra_deps {
         out.push_str(line);
