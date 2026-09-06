@@ -1,0 +1,37 @@
+name: Sync upstream repository
+
+on:
+  schedule:
+    # 04:30 UTC is 10:00 AM IST (UTC+05:30).
+    - cron: "30 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out destination repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch upstream changes
+        run: |
+          git remote add upstream https://git.smukx.site/smukx/RustyPacker.git
+          git fetch --no-tags upstream main
+
+      - name: Update destination when upstream changed
+        run: |
+          if git diff --quiet HEAD upstream/main; then
+            echo "Destination is already up to date."
+            exit 0
+          fi
+
+          # Merge upstream without overwriting destination-only commits.
+          # Conflicts fail the job and require manual resolution.
+          git merge --no-edit upstream/main
+          git push origin HEAD:main
