@@ -33,5 +33,5 @@ jobs:
 
           # Merge upstream without overwriting destination-only commits.
           # Conflicts fail the job and require manual resolution.
-          git merge --no-edit upstream/main
+          git merge --no-edit --allow-unrelated-histories upstream/main
           git push origin HEAD:main
